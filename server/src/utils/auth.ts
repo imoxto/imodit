@@ -71,4 +71,20 @@ export async function authenticate({ req, prisma }: Context) {
   });
   if (!userFromDb) throw new Error("Not Authenticated");
   req.user = userFromDb;
+  return userFromDb;
+}
+
+export async function authenticateWithPost({ req, prisma }: Context, postId: string) {
+  const token = req.cookies[COOKIE_NAME];
+  if (!token) {
+    throw new Error("Not Authenticated");
+  }
+  const { userId } = (await jwt.verify(token, JWT_SECRET)) as UserJWTPayload;
+  const postFromDb = await prisma.post.findFirst({
+    where: { id: postId, authorId: userId },
+    include: { author: true },
+  });
+  if (!postFromDb) throw new Error("Not Authenticated");
+  req.user = { ...postFromDb.author, posts: [postFromDb], comments: [] };
+  return postFromDb;
 }
