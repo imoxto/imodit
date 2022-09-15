@@ -16,7 +16,7 @@ enum Visibility {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
+  id         String     @id @default(uuid())
   email      String?    @unique
   username   String     @unique
   hash       String?
@@ -24,15 +24,28 @@ model User {
   visibility Visibility @default(private)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+  comments   Comment[]
 }
 
 model Post {
-  id         Int        @id @default(autoincrement())
+  id         String     @id @default(uuid())
   title      String
   content    String
   visibility Visibility @default(private)
   author     User       @relation(fields: [authorId], references: [id])
-  authorId   Int
+  authorId   String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+  comments   Comment[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

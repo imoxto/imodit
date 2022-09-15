@@ -41,7 +41,7 @@ export class UserResolver {
   }
 
   @Query(() => User)
-  findOneUser(@Ctx() { prisma }: Context, @Arg("id") id: number) {
+  findOneUser(@Ctx() { prisma }: Context, @Arg("id") id: string) {
     return prisma.user.findFirst({ where: { id, visibility: "public" } });
   }
 

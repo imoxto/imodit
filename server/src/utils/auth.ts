@@ -67,7 +67,7 @@ export async function authenticate({ req, prisma }: Context) {
   const { userId } = (await jwt.verify(token, JWT_SECRET)) as UserJWTPayload;
   const userFromDb = await prisma.user.findUnique({
     where: { id: userId },
-    include: { posts: true },
+    include: { posts: true, comments: true },
   });
   if (!userFromDb) throw new Error("Not Authenticated");
   req.user = userFromDb;

@@ -1,22 +1,15 @@
-import { Visibility } from "@prisma/client";
 import { ObjectType, Field } from "type-graphql";
-import { Comment } from "./Comment";
+import { Post } from "./Post";
 import { Response } from "./response";
 import { User } from "./User";
 
 @ObjectType()
-export class Post {
+export class Comment {
   @Field()
   id!: string;
 
   @Field()
-  title!: string;
-
-  @Field()
   content!: string;
-
-  @Field()
-  visibility!: Visibility;
 
   @Field(() => User)
   author!: User;
@@ -24,18 +17,21 @@ export class Post {
   @Field()
   authorId!: string;
 
+  @Field(() => Post)
+  post!: Post;
+
+  @Field()
+  postId!: string;
+
   @Field()
   createdAt!: Date;
 
   @Field()
   updatedAt!: Date;
-
-  @Field(() => [Comment])
-  comments!: Comment[];
 }
 
 @ObjectType()
-export class PostResponse extends Response {
-  @Field(() => Post, { nullable: true })
-  post?: Post;
+export class CommentResponse extends Response {
+  @Field(() => Comment, { nullable: true })
+  post?: Comment;
 }

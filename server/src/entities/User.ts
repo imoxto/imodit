@@ -1,12 +1,13 @@
 import { Visibility } from "@prisma/client";
 import { ObjectType, Field } from "type-graphql";
+import { Comment } from "./Comment";
 import { Post } from "./Post";
 import { Response } from "./response";
 
 @ObjectType()
 export class User {
   @Field()
-  id!: number;
+  id!: string;
 
   @Field({ nullable: true })
   email!: string;
@@ -25,6 +26,9 @@ export class User {
 
   @Field()
   updatedAt!: Date;
+
+  @Field(() => [Comment])
+  comments!: Comment[];
 }
 
 @ObjectType()
