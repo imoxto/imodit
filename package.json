@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "server:dev": "yarn workspace server dev",
+    "migrate-db": "yarn workspace server prisma-mig"
+  }
+}
