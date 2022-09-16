@@ -1,6 +1,6 @@
 import { Visibility } from "@prisma/client";
 import { Resolver, Query, Ctx, Arg, Mutation, InputType, Field } from "type-graphql";
-import { authenticate, notAuthenticatedErr, notAuthorizedErr } from "../utils";
+import { authenticate, authenticateWithPost, notAuthenticatedErr, notAuthorizedErr } from "../utils";
 
 import { Post, PostResponse } from "../entities";
 import { Context } from "../types";
@@ -46,37 +46,48 @@ export class PostResolver {
   @Mutation(() => PostResponse)
   async updatePost(@Ctx() context: Context, @Arg("UpdatePostInput") input: UpdatePostInput, @Arg("postId") id: string) {
     try {
-      authenticate(context);
+      const postToUpdate = await authenticateWithPost(context, id);
+      const post = await context.prisma.post.update({
+        data: {
+          ...input,
+        },
+        where: { id: postToUpdate.id },
+        include: { comments: true },
+      });
+      return { post };
     } catch (err) {
-      return notAuthenticatedErr();
-    }
-    if (!context.req.user?.posts.some((post) => post.id === id)) {
       return notAuthorizedErr();
     }
-    const post = await context.prisma.post.update({
-      data: {
-        ...input,
-      },
-      where: { id },
-      include: { comments: true },
-    });
-    return { post };
+  }
+
+  @Mutation(() => PostResponse)
+  async deletePost(@Ctx() context: Context, @Arg("postId") id: string) {
+    try {
+      const postToUpdate = await authenticateWithPost(context, id);
+      const post = await context.prisma.post.delete({
+        where: { id: postToUpdate.id },
+        include: { comments: true },
+      });
+      return { post };
+    } catch (err) {
+      return notAuthorizedErr();
+    }
   }
 
   @Mutation(() => PostResponse)
   async createPost(@Ctx() context: Context, @Arg("CreatePostInput") input: CreatePostInput) {
     try {
-      authenticate(context);
+      const user = await authenticate(context);
+      const post = await context.prisma.post.create({
+        data: {
+          ...input,
+          authorId: user.id,
+        },
+        include: { comments: true },
+      });
+      return { post };
     } catch (err) {
       return notAuthenticatedErr();
     }
-    const post = await context.prisma.post.create({
-      data: {
-        ...input,
-        authorId: context.req.user!.id,
-      },
-      include: { comments: true },
-    });
-    return { post };
   }
 }
