@@ -29,7 +29,7 @@ async function main() {
 
   await apolloServer.start();
   const origin = [CLIENT_URL];
-  if (PROD_ENV) {
+  if (!PROD_ENV) {
     origin.push("https://studio.apollographql.com");
   }
   apolloServer.applyMiddleware({
