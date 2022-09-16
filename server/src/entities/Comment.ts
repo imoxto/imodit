@@ -33,5 +33,5 @@ export class Comment {
 @ObjectType()
 export class CommentResponse extends Response {
   @Field(() => Comment, { nullable: true })
-  post?: Comment;
+  comment?: Comment;
 }

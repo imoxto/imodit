@@ -15,7 +15,7 @@ export class Post {
   @Field()
   content!: string;
 
-  @Field()
+  @Field(() => Visibility)
   visibility!: Visibility;
 
   @Field(() => User)

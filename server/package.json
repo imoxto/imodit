@@ -23,7 +23,6 @@
     "@prisma/client": "^4.3.1",
     "apollo-server-express": "^3.10.2",
     "argon2": "^0.29.1",
-    "class-validator": "^0.13.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",

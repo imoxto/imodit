@@ -13,7 +13,7 @@ class CreatePostInput {
   @Field()
   content!: string;
 
-  @Field({ nullable: true })
+  @Field(() => Visibility, { nullable: true })
   visibility?: Visibility;
 }
 
