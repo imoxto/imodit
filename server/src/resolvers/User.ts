@@ -51,7 +51,7 @@ export class UserResolver {
       const user = await authenticate(context);
       return { user };
     } catch (err) {
-      return notAuthenticatedErr();
+      return notAuthenticatedErr(context.res);
     }
   }
 
@@ -73,7 +73,7 @@ export class UserResolver {
 
       return { user };
     } catch (err: any) {
-      return alreadyExistsErr("User");
+      return alreadyExistsErr(res, "User");
     }
   }
 
@@ -94,7 +94,7 @@ export class UserResolver {
 
       return { user };
     } catch (err: any) {
-      return notAuthenticatedErr("Incorrect credentials");
+      return notAuthenticatedErr(res, "Incorrect credentials");
     }
   }
 
@@ -104,6 +104,7 @@ export class UserResolver {
       removeResCookie(res);
       return "success";
     } catch (err) {
+      res.status(500)
       return "error";
     }
   }

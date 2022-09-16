@@ -47,7 +47,7 @@ export class CommentResolver {
       });
       return { comment };
     } catch (err) {
-      return notAuthorizedErr();
+      return notAuthorizedErr(context.res);
     }
   }
 
@@ -60,7 +60,7 @@ export class CommentResolver {
       });
       return { comment };
     } catch (err) {
-      return notAuthorizedErr();
+      return notAuthorizedErr(context.res);
     }
   }
 
@@ -76,7 +76,7 @@ export class CommentResolver {
       });
       return { comment };
     } catch (err) {
-      return notAuthenticatedErr();
+      return notAuthenticatedErr(context.res);
     }
   }
 }

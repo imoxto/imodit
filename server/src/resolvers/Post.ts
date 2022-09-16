@@ -56,7 +56,7 @@ export class PostResolver {
       });
       return { post };
     } catch (err) {
-      return notAuthorizedErr();
+      return notAuthorizedErr(context.res);
     }
   }
 
@@ -70,7 +70,7 @@ export class PostResolver {
       });
       return { post };
     } catch (err) {
-      return notAuthorizedErr();
+      return notAuthorizedErr(context.res);
     }
   }
 
@@ -87,7 +87,7 @@ export class PostResolver {
       });
       return { post };
     } catch (err) {
-      return notAuthenticatedErr();
+      return notAuthenticatedErr(context.res);
     }
   }
 }
