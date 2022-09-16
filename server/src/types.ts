@@ -1,4 +1,4 @@
-import { Comment, Post, PrismaClient, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 
 export type UserJWTPayload = {
@@ -7,14 +7,7 @@ export type UserJWTPayload = {
 
 export type Context<Params = any, ReqBody = any, ResBody = any> = {
   prisma: PrismaClient;
-  req: Request<Params, any, ReqBody> & {
-    user?:
-      | (User & {
-          comments: Comment[];
-          posts: Post[];
-        })
-      | null;
-  };
+  req: Request<Params, any, ReqBody>;
   res: Response<ResBody>;
 };
 

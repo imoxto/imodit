@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import argon2 from "argon2";
 import { CLIENT_URL, JWT_ALGORITHM, JWT_SECRET, NODE_ENV } from "../config";
 import { randomBytes } from "crypto";
-import { CookieOptions, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Context, UserJWTPayload } from "types";
 
@@ -59,32 +59,39 @@ export function removeResCookie(res: Response) {
   res.clearCookie(COOKIE_NAME, cookieOptions);
 }
 
-export async function authenticate({ req, prisma }: Context) {
+export function getJwtPayloadFromReq(req: Request) {
   const token = req.cookies[COOKIE_NAME];
   if (!token) {
     throw new Error("Not Authenticated");
   }
-  const { userId } = (await jwt.verify(token, JWT_SECRET)) as UserJWTPayload;
+  return jwt.verify(token, JWT_SECRET) as Promise<UserJWTPayload>;
+}
+
+export async function authenticate({ req, prisma }: Context) {
+  const { userId } = await getJwtPayloadFromReq(req);
   const userFromDb = await prisma.user.findUnique({
     where: { id: userId },
-    include: { posts: true, comments: true },
   });
   if (!userFromDb) throw new Error("Not Authenticated");
-  req.user = userFromDb;
   return userFromDb;
 }
 
 export async function authenticateWithPost({ req, prisma }: Context, postId: string) {
-  const token = req.cookies[COOKIE_NAME];
-  if (!token) {
-    throw new Error("Not Authenticated");
-  }
-  const { userId } = (await jwt.verify(token, JWT_SECRET)) as UserJWTPayload;
+  const { userId } = await getJwtPayloadFromReq(req);
   const postFromDb = await prisma.post.findFirst({
     where: { id: postId, authorId: userId },
     include: { author: true },
   });
   if (!postFromDb) throw new Error("Not Authenticated");
-  req.user = { ...postFromDb.author, posts: [postFromDb], comments: [] };
   return postFromDb;
+}
+
+export async function authenticateWithComment({ req, prisma }: Context, commentId: string) {
+  const { userId } = await getJwtPayloadFromReq(req);
+  const commentFromDb = await prisma.comment.findFirst({
+    where: { id: commentId, authorId: userId },
+    include: { author: true },
+  });
+  if (!commentFromDb) throw new Error("Not Authenticated");
+  return commentFromDb;
 }

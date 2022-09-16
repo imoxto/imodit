@@ -48,14 +48,11 @@ export class UserResolver {
   @Query(() => UserResponse)
   async me(@Ctx() context: Context) {
     try {
-      await authenticate(context);
+      const user = await authenticate(context);
+      return { user };
     } catch (err) {
       return notAuthenticatedErr();
     }
-
-    if (!context.req.user) return notAuthenticatedErr();
-
-    return { user: context.req.user };
   }
 
   @Mutation(() => UserResponse)
