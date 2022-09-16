@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import { buildSchema, NonEmptyArray } from "type-graphql";
 import "reflect-metadata";
 
-import { CLIENT_URL, getContext, NODE_ENV, SERVER_PORT } from "./config";
+import { CLIENT_URL, getContext, PROD_ENV, SERVER_PORT } from "./config";
 import * as resolverObj from "./resolvers";
 
 async function main() {
@@ -29,7 +29,7 @@ async function main() {
 
   await apolloServer.start();
   const origin = [CLIENT_URL];
-  if (NODE_ENV !== "production") {
+  if (PROD_ENV) {
     origin.push("https://studio.apollographql.com");
   }
   apolloServer.applyMiddleware({

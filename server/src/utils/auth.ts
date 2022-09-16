@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import argon2 from "argon2";
-import { CLIENT_URL, JWT_ALGORITHM, JWT_SECRET, NODE_ENV } from "../config";
+import { CLIENT_URL, JWT_ALGORITHM, JWT_SECRET, PROD_ENV } from "../config";
 import { randomBytes } from "crypto";
 import { CookieOptions, Request, Response } from "express";
 import jwt from "jsonwebtoken";
@@ -16,7 +16,7 @@ const hashingConfig = {
 const cookieOptions: CookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: NODE_ENV === "production" ? "strict" : "none",
+  sameSite: PROD_ENV ? "strict" : "none",
   domain: new URL(CLIENT_URL as string).hostname as string,
 };
 

@@ -3,14 +3,14 @@ import { Request, Response } from "express";
 import { Algorithm } from "jsonwebtoken";
 import { Context } from "types";
 
-export const NODE_ENV = process.env.NODE_ENV as "development" | "production";
+export const PROD_ENV = process.env.NODE_ENV === "production";
 export const SERVER_PORT = process.env.SERVER_PORT!;
 export const SERVER_URL = process.env.SERVER_URL!;
 export const CLIENT_URL = process.env.CLIENT_URL!;
 export const JWT_SECRET = process.env.JWT_SECRET!;
 export const JWT_ALGORITHM = process.env.JWT_ALGORITHM! as Algorithm;
 
-export const prisma = new PrismaClient(NODE_ENV === "production" ? undefined : { log: ["query"] });
+export const prisma = new PrismaClient(PROD_ENV ? undefined : { log: ["query"] });
 
 export function getContext({ req, res }: { req: Request; res: Response }): Context {
   return { prisma, req, res };
