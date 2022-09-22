@@ -1,7 +1,8 @@
-import { Button, LinearProgress, Typography } from "@mui/material";
-import { Formik, Form, Field } from "formik";
-import { TextField } from "formik-mui";
+import { Button, Typography, Stack, Box } from "@mui/material";
+import { Formik, Form } from "formik";
 import Link from "next/link";
+
+import { TextInput } from "../components/form";
 
 interface Values {
   username: string;
@@ -11,7 +12,7 @@ interface Values {
 
 function Signup() {
   return (
-    <>
+    <Box alignItems="center">
       <Formik
         initialValues={{
           email: "",
@@ -28,6 +29,8 @@ function Signup() {
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
+          console.log(values);
+
           setTimeout(() => {
             setSubmitting(false);
             alert(JSON.stringify(values, null, 2));
@@ -36,25 +39,27 @@ function Signup() {
       >
         {({ submitForm, isSubmitting }) => (
           <Form>
-            <Field component={TextField} name="email" type="email" label="Email" />
-            <Field component={TextField} name="username" type="username" label="Username" />
-            <br />
-            <Field component={TextField} name="password" type="password" label="Password" />
-            {isSubmitting && <LinearProgress />}
-            <br />
-            <Button variant="contained" color="primary" disabled={isSubmitting} onClick={submitForm}>
-              Submit
-            </Button>
+            <Typography alignItems="center" variant="h2">
+              Sign Up
+            </Typography>
+            <Stack gap={1}>
+              <TextInput label="Username" disabled={isSubmitting} placeholder="Your username" name="username" />
+              <TextInput label="Email" disabled={isSubmitting} placeholder="example@email.com" name="email" />
+              <TextInput label="Password" disabled={isSubmitting} placeholder="********" name="password" />
+              <Button variant="contained" color="primary" disabled={isSubmitting} onClick={submitForm}>
+                Submit
+              </Button>
+            </Stack>
+            <Typography>
+              {"Already have an account? "}
+              <Link href="/login">
+                <Button variant="text">Log In</Button>
+              </Link>
+            </Typography>
           </Form>
         )}
       </Formik>
-      <Typography>
-        {"Already have an account? "}
-        <Link href="/login">
-          <Button variant="text">Log In</Button>
-        </Link>
-      </Typography>
-    </>
+    </Box>
   );
 }
 
