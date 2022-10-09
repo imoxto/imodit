@@ -9,6 +9,7 @@
     "server:dev": "yarn workspace server dev",
     "client:add": "yarn workspace client add",
     "server:add": "yarn workspace server add",
-    "migrate-db": "yarn workspace server prisma-mig"
+    "migrate-db": "yarn workspace server prisma-mig",
+    "client:codegen": "yarn workspace client gen"
   }
 }

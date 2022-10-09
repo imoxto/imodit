@@ -1,8 +1,15 @@
 import { Button, Typography, Stack, Box } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { Formik, Form } from "formik";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 
 import { TextInput } from "../components/form";
+import { LoggedIn } from "../components/LoggedIn";
+import { client } from "../utils/config";
+import { useRegisterMutation } from "../utils/generates";
+import { useUserStore } from "../utils/stores";
 
 interface Values {
   username: string;
@@ -11,6 +18,14 @@ interface Values {
 }
 
 function Signup() {
+  const { user } = useUserStore((state) => ({ user: state.user }));
+  const { mutateAsync } = useRegisterMutation(client);
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+  if (user) {
+    return <LoggedIn user={user} />;
+  }
   return (
     <Box alignItems="center">
       <Formik
@@ -19,22 +34,30 @@ function Signup() {
           username: "",
           password: "",
         }}
-        validate={(values) => {
-          const errors: Partial<Values> = {};
-          if (!values.email) {
-            errors.email = "Required";
-          } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-            errors.email = "Invalid email address";
-          }
-          return errors;
-        }}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log(values);
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          setSubmitting(true);
 
-          setTimeout(() => {
-            setSubmitting(false);
-            alert(JSON.stringify(values, null, 2));
-          }, 500);
+          await mutateAsync(
+            {
+              registerInput: values,
+            },
+            {
+              onSuccess(data) {
+                if (data?.register?.user) {
+                  queryClient.invalidateQueries(["Me", {}]);
+                  enqueueSnackbar("Successfully signed up!");
+                  setTimeout(() => {
+                    if (router.pathname === "/login") {
+                      router.push("/");
+                    }
+                  }, 3000);
+                } else if (data?.register?.error) {
+                  enqueueSnackbar(data.register.error.message);
+                }
+              },
+            }
+          );
+          setSubmitting(false);
         }}
       >
         {({ submitForm, isSubmitting }) => (

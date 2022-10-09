@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { Algorithm } from "jsonwebtoken";
 import { Context } from "types";
+import { config } from "dotenv";
+config();
 
 export const PROD_ENV = process.env.NODE_ENV === "production";
 export const SERVER_PORT = process.env.SERVER_PORT!;

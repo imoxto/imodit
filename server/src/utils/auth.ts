@@ -15,14 +15,14 @@ const hashingConfig = {
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: true,
+  secure: PROD_ENV || true,
   sameSite: PROD_ENV ? "strict" : "none",
   domain: new URL(CLIENT_URL as string).hostname as string,
 };
 
 const durationInS = 7 * 24 * 60 * 60;
 
-const COOKIE_NAME = "auth.token";
+const COOKIE_NAME = "imodit.auth";
 
 export async function hashPassword(password: string) {
   let salt = randomBytes(16);

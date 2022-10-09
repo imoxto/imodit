@@ -1,0 +1,33 @@
+fragment regularUser on User {
+  id
+  email
+  username
+  visibility
+  updatedAt
+  createdAt
+}
+
+fragment regularError on ApiError {
+  type
+  message
+  fields
+}
+
+fragment regularComment on Comment {
+  id
+  content
+  authorId
+  postId
+  createdAt
+  updatedAt
+}
+
+fragment regularPost on Post {
+  title
+  content
+  id
+  visibility
+  authorId
+  createdAt
+  updatedAt
+}

@@ -1,0 +1,16 @@
+query Me {
+  me {
+    error {
+      ...regularError
+    }
+    user {
+      ...regularUser
+    }
+  }
+}
+
+query FindAllPosts {
+  findAllPosts {
+    ...regularPost
+  }
+}

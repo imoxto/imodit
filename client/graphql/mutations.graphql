@@ -1,0 +1,88 @@
+mutation Logout {
+  logout
+}
+
+mutation Register($registerInput: RegisterInput!) {
+  register(RegisterInput: $registerInput) {
+    error {
+      ...regularError
+    }
+    user {
+      ...regularUser
+    }
+  }
+}
+
+mutation Login($loginInput: LoginInput!) {
+  login(LoginInput: $loginInput) {
+    error {
+      ...regularError
+    }
+    user {
+      ...regularUser
+    }
+  }
+}
+
+mutation DeletePost($deletePostPostId2: String!) {
+  deletePost(postId: $deletePostPostId2) {
+    error {
+      ...regularError
+    }
+    post {
+      ...regularPost
+    }
+  }
+}
+
+mutation CreatePost($createPostInput: CreatePostInput!) {
+  createPost(CreatePostInput: $createPostInput) {
+    error {
+      ...regularError
+    }
+    post {
+      ...regularPost
+    }
+  }
+}
+
+mutation UpdatePost($postId: String!, $updatePostInput: UpdatePostInput!) {
+  updatePost(postId: $postId, UpdatePostInput: $updatePostInput) {
+    error {
+      ...regularError
+    }
+    post {
+      ...regularPost
+    }
+  }
+}
+
+mutation CreateComment($createCommentInput: CreateCommentInput!) {
+  createComment(CreateCommentInput: $createCommentInput) {
+    error {
+      ...regularError
+    }
+    comment {
+      ...regularComment
+    }
+  }
+}
+
+mutation UpdateComment($commentId: String!, $updateCommentInput: UpdateCommentInput!) {
+  updateComment(CommentId: $commentId, UpdateCommentInput: $updateCommentInput) {
+    error {
+      ...regularError
+    }
+    comment {
+      ...regularComment
+    }
+  }
+}
+
+mutation DeleteComment($deleteCommentCommentId2: String!) {
+  deleteComment(CommentId: $deleteCommentCommentId2) {
+    error {
+      ...regularError
+    }
+  }
+}
