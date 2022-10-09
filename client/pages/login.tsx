@@ -1,7 +1,14 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { Formik, Form } from "formik";
 import { TextInput } from "../components/form";
 import Link from "next/link";
+import { useLoginMutation } from "../utils/generates";
+import { useUserStore } from "../utils/stores";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
+import { client } from "../utils/config";
+import { LoggedIn } from "../components/LoggedIn";
 
 interface Values {
   username: string;
@@ -9,21 +16,48 @@ interface Values {
 }
 
 function Login() {
+  const { user } = useUserStore((state) => ({
+    user: state.user,
+  }));
+  const { mutateAsync } = useLoginMutation(client);
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+
+  if (user) {
+    return <LoggedIn user={user} />;
+  }
   return (
-    <Box alignItems="center">
+    <Stack alignItems="center" justifyContent="center">
       <Formik
         initialValues={{
           username: "",
           password: "",
         }}
-        // validate={}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log(values);
+        onSubmit={async (values: Values, { setSubmitting }) => {
+          setSubmitting(true);
 
-          setTimeout(() => {
-            setSubmitting(false);
-            alert(JSON.stringify(values, null, 2));
-          }, 500);
+          await mutateAsync(
+            {
+              loginInput: values,
+            },
+            {
+              onSuccess(data) {
+                if (data?.login?.user) {
+                  queryClient.invalidateQueries(["Me", {}]);
+                  enqueueSnackbar("Successfully logged in!");
+                  setTimeout(() => {
+                    if (router.pathname === "/login") {
+                      router.push("/");
+                    }
+                  }, 3000);
+                } else if (data?.login?.error) {
+                  enqueueSnackbar(data.login.error.message);
+                }
+              },
+            }
+          );
+          setSubmitting(false);
         }}
       >
         {({ submitForm, isSubmitting }) => (
@@ -45,7 +79,7 @@ function Login() {
           </Form>
         )}
       </Formik>
-    </Box>
+    </Stack>
   );
 }
 
