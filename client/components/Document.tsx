@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { ReactNode, useEffect } from "react";
 import { client } from "../utils/config";
 import { useMeQuery } from "../utils/generates";
-import { useUserStore } from "../utils/stores";
+import { useUserStore } from "../utils/config";
 
 export function Document({ children }: { children: ReactNode }) {
   const me = useMeQuery(client, {});

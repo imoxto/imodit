@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { MyLink } from "./MyLink";
-import { useUserStore } from "../utils/stores";
+import { useUserStore } from "../utils/config";
 import { RowStack } from "./RowStack";
 import { useLogoutMutation } from "../utils/generates";
 import { client } from "../utils/config";

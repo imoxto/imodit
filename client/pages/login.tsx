@@ -3,7 +3,7 @@ import { Formik, Form } from "formik";
 import { TextInput } from "../components/form";
 import Link from "next/link";
 import { useLoginMutation } from "../utils/generates";
-import { useUserStore } from "../utils/stores";
+import { useUserStore } from "../utils/config";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";

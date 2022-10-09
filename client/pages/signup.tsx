@@ -9,7 +9,7 @@ import { TextInput } from "../components/form";
 import { LoggedIn } from "../components/LoggedIn";
 import { client } from "../utils/config";
 import { useRegisterMutation } from "../utils/generates";
-import { useUserStore } from "../utils/stores";
+import { useUserStore } from "../utils/config";
 
 interface Values {
   username: string;
