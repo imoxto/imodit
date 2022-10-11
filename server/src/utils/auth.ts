@@ -1,10 +1,11 @@
 import { User } from "@prisma/client";
 import argon2 from "argon2";
-import { CLIENT_URL, JWT_ALGORITHM, JWT_SECRET, PROD_ENV } from "../config";
+import { JWT_ALGORITHM, JWT_SECRET, PROD_ENV } from "../config";
 import { randomBytes } from "crypto";
 import { CookieOptions, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { Context, UserJWTPayload } from "types";
+import { Context, UserJWTPayload } from "../types";
+import { getTwitterUser } from "../oauth";
 
 const hashingConfig = {
   // based on OWASP cheat sheet recommendations (as of March, 2022)
@@ -17,7 +18,7 @@ const cookieOptions: CookieOptions = {
   httpOnly: true,
   secure: PROD_ENV || true,
   sameSite: PROD_ENV ? "strict" : "none",
-  domain: new URL(CLIENT_URL as string).hostname as string,
+  // domain: new URL(CLIENT_URL as string).hostname as string,
 };
 
 const durationInS = 7 * 24 * 60 * 60;
@@ -44,14 +45,28 @@ export function signToken<Payload extends Record<string, any>>(payload: Payload)
   });
 }
 
-export async function addResCookie(res: Response, user: User, remember = true) {
-  const { id } = user;
+export function addResCookie({
+  res,
+  user,
+  remember = true,
+  accessToken,
+  duration,
+}: {
+  res: Response;
+  user: User;
+  remember?: boolean;
+  accessToken?: string;
+  duration?: number;
+}) {
+  const { id, type } = user;
   const token = signToken<UserJWTPayload>({
     userId: id,
+    userType: type,
+    accessToken,
   });
   res.cookie(COOKIE_NAME, token, {
     ...cookieOptions,
-    expires: remember ? new Date(Date.now() + durationInS * 1000) : undefined,
+    expires: remember ? new Date(Date.now() + (duration ?? durationInS) * 1000) : undefined,
   });
 }
 
@@ -67,31 +82,46 @@ export function getJwtPayloadFromReq(req: Request) {
   return jwt.verify(token, JWT_SECRET) as Promise<UserJWTPayload>;
 }
 
+export async function checkUser(user: User | null, accessToken: string | undefined) {
+  if (!user) throw new Error("Not Authenticated");
+  if (user.type === "twitter") {
+    if (!accessToken) {
+      throw new Error("Not Authenticated");
+    }
+    const twUser = await getTwitterUser(accessToken);
+    if (twUser?.id !== user.id) {
+      throw new Error("Not Authenticated");
+    }
+  }
+  return user;
+}
+
 export async function authenticate({ req, prisma }: Context) {
-  const { userId } = await getJwtPayloadFromReq(req);
+  const { userId, userType, accessToken } = await getJwtPayloadFromReq(req);
   const userFromDb = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { id_type: { id: userId, type: userType } },
   });
-  if (!userFromDb) throw new Error("Not Authenticated");
-  return userFromDb;
+  return await checkUser(userFromDb, accessToken);
 }
 
 export async function authenticateWithPost({ req, prisma }: Context, postId: string) {
-  const { userId } = await getJwtPayloadFromReq(req);
+  const { userId, accessToken } = await getJwtPayloadFromReq(req);
   const postFromDb = await prisma.post.findFirst({
     where: { id: postId, authorId: userId },
     include: { author: true },
   });
   if (!postFromDb) throw new Error("Not Authenticated");
+  await checkUser(postFromDb.author, accessToken);
   return postFromDb;
 }
 
 export async function authenticateWithComment({ req, prisma }: Context, commentId: string) {
-  const { userId } = await getJwtPayloadFromReq(req);
+  const { userId, accessToken } = await getJwtPayloadFromReq(req);
   const commentFromDb = await prisma.comment.findFirst({
     where: { id: commentId, authorId: userId },
     include: { author: true },
   });
   if (!commentFromDb) throw new Error("Not Authenticated");
+  await checkUser(commentFromDb.author, accessToken);
   return commentFromDb;
 }

@@ -10,6 +10,7 @@ import { LoggedIn } from "../components/LoggedIn";
 import { client } from "../utils/config";
 import { useRegisterMutation } from "../utils/generates";
 import { useUserStore } from "../utils/config";
+import { OAuthBar } from "../components/OauthBar";
 
 interface Values {
   username: string;
@@ -27,7 +28,7 @@ function Signup() {
     return <LoggedIn user={user} />;
   }
   return (
-    <Box alignItems="center">
+    <Stack alignItems="center" justifyContent="center">
       <Formik
         initialValues={{
           email: "",
@@ -47,7 +48,7 @@ function Signup() {
                   queryClient.invalidateQueries(["Me", {}]);
                   enqueueSnackbar("Successfully signed up!");
                   setTimeout(() => {
-                    if (router.pathname === "/login") {
+                    if (router.pathname === "/signup") {
                       router.push("/");
                     }
                   }, 3000);
@@ -82,7 +83,8 @@ function Signup() {
           </Form>
         )}
       </Formik>
-    </Box>
+      <OAuthBar />
+    </Stack>
   );
 }
 

@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { client } from "../utils/config";
 import { LoggedIn } from "../components/LoggedIn";
+import { OAuthBar } from "../components/OauthBar";
 
 interface Values {
   username: string;
@@ -79,6 +80,7 @@ function Login() {
           </Form>
         )}
       </Formik>
+      <OAuthBar />
     </Stack>
   );
 }

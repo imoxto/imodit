@@ -15,16 +15,31 @@ enum Visibility {
   private
 }
 
+enum UserType {
+  local
+  twitter
+  google
+  facebook
+}
+
+enum UserRole {
+  user
+  admin
+}
+
 model User {
   id         String     @id @default(uuid())
   email      String?    @unique
   username   String     @unique
   hash       String?
+  type       UserType   @default(local)
+  role       UserRole   @default(user)
   posts      Post[]
   visibility Visibility @default(private)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   comments   Comment[]
+  @@unique([id, type])
 }
 
 model Post {

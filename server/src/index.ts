@@ -3,9 +3,12 @@ import { ApolloServer } from "apollo-server-express";
 import cookieParser from "cookie-parser";
 import { buildSchema, NonEmptyArray } from "type-graphql";
 import "reflect-metadata";
+import fs from "fs";
+import https from "https";
 
 import { CLIENT_URL, getContext, PROD_ENV, SERVER_PORT } from "./config";
 import * as resolverObj from "./resolvers";
+import { twitterOauth } from "./oauth";
 
 async function main() {
   const resolvers = Object.entries(resolverObj).map((v) => v[1]) as unknown as
@@ -21,17 +24,17 @@ async function main() {
     context: getContext,
   });
 
-  app.use(cookieParser());
-
-  app.get("/ping", (_, res) => res.json("pong"));
-
-  app.listen(SERVER_PORT, () => console.log(`Server listening on port ${SERVER_PORT}`));
-
-  await apolloServer.start();
   const origin = [CLIENT_URL];
   if (!PROD_ENV) {
     origin.push("https://studio.apollographql.com");
   }
+
+  app.use(cookieParser());
+
+  app.get("/ping", (_, res) => res.json("pong"));
+
+  app.get("/oauth/twitter", twitterOauth);
+  await apolloServer.start();
   apolloServer.applyMiddleware({
     app,
     cors: {
@@ -39,6 +42,17 @@ async function main() {
       credentials: true,
     },
   });
+
+  if (!PROD_ENV) {
+    const options = {
+      key: fs.readFileSync("../localhost-key.pem"),
+      cert: fs.readFileSync("../localhost.pem"),
+    };
+    const server = https.createServer(options, app);
+    server.listen(SERVER_PORT, () => console.log(`Server listening on port ${SERVER_PORT}`));
+  } else {
+    app.listen(SERVER_PORT, () => console.log(`Server listening on port ${SERVER_PORT}`));
+  }
 }
 
 main();

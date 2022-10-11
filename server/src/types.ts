@@ -1,8 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserType } from "@prisma/client";
 import { Request, Response } from "express";
 
 export type UserJWTPayload = {
   userId: string;
+  userType: UserType;
+  accessToken?: string;
 };
 
 export type Context<Params = any, ReqBody = any, ResBody = any> = {

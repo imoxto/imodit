@@ -69,7 +69,7 @@ export class UserResolver {
         include: { posts: true },
       });
 
-      addResCookie(res, user);
+      addResCookie({ res, user });
 
       return { user };
     } catch (err: any) {
@@ -90,7 +90,7 @@ export class UserResolver {
       }
       await verifyPasswordWithHash(input.password, user.hash);
 
-      addResCookie(res, user);
+      addResCookie({ res, user });
 
       return { user };
     } catch (err: any) {
@@ -104,7 +104,7 @@ export class UserResolver {
       removeResCookie(res);
       return "success";
     } catch (err) {
-      res.status(500)
+      res.status(500);
       return "error";
     }
   }
