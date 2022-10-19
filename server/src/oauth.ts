@@ -1,6 +1,6 @@
 import { prisma } from "./config";
 import axios from "axios";
-import { CLIENT_URL } from "./config";
+import { CLIENT_URL1 } from "./config";
 import { Context } from "./types";
 import { addResCookie } from "./utils";
 
@@ -15,7 +15,7 @@ export const twitterOauthTokenParams = {
   client_id: TWITTER_OAUTH_CLIENT_ID,
   code_verifier: "challenge",
   // http://www.localhost:3005/v1/oauth/twitter
-  redirect_uri: `https://www.localhost:3001/oauth/twitter`,
+  redirect_uri: `http://www.localhost:3001/oauth/twitter`,
   grant_type: "authorization_code",
 };
 
@@ -75,16 +75,13 @@ export async function twitterOauth(req: Context["req"], res: Context["res"]) {
 
   // get the access token with the code
   const TwitterOAuthToken = await getTwitterOAuthToken(code);
-
-  console.log(TwitterOAuthToken);
-
   if (!TwitterOAuthToken) {
-    return res.redirect(CLIENT_URL);
+    return res.redirect(CLIENT_URL1);
   }
 
   const twitterUser = await getTwitterUser(TwitterOAuthToken.access_token);
   if (!twitterUser) {
-    return res.redirect(CLIENT_URL);
+    return res.redirect(CLIENT_URL1);
   }
 
   const user = await prisma.user.upsert({
@@ -108,5 +105,5 @@ export async function twitterOauth(req: Context["req"], res: Context["res"]) {
     duration: TwitterOAuthToken.expires_in + 3600,
   });
 
-  return res.redirect(CLIENT_URL);
+  return res.redirect(CLIENT_URL1);
 }

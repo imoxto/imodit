@@ -3,10 +3,8 @@ import { ApolloServer } from "apollo-server-express";
 import cookieParser from "cookie-parser";
 import { buildSchema, NonEmptyArray } from "type-graphql";
 import "reflect-metadata";
-import fs from "fs";
-import https from "https";
 
-import { CLIENT_URL, getContext, PROD_ENV, SERVER_PORT } from "./config";
+import { CLIENT_URL1, CLIENT_URL2, getContext, PROD_ENV, SERVER_PORT } from "./config";
 import * as resolverObj from "./resolvers";
 import { twitterOauth } from "./oauth";
 
@@ -24,7 +22,7 @@ async function main() {
     context: getContext,
   });
 
-  const origin = [CLIENT_URL];
+  const origin = [CLIENT_URL1, CLIENT_URL2];
   if (!PROD_ENV) {
     origin.push("https://studio.apollographql.com");
   }
@@ -43,16 +41,7 @@ async function main() {
     },
   });
 
-  if (!PROD_ENV) {
-    const options = {
-      key: fs.readFileSync("../localhost-key.pem"),
-      cert: fs.readFileSync("../localhost.pem"),
-    };
-    const server = https.createServer(options, app);
-    server.listen(SERVER_PORT, () => console.log(`Server listening on port ${SERVER_PORT}`));
-  } else {
-    app.listen(SERVER_PORT, () => console.log(`Server listening on port ${SERVER_PORT}`));
-  }
+  app.listen(SERVER_PORT, () => console.log(`Server listening on port ${SERVER_PORT}`));
 }
 
 main();

@@ -5,7 +5,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 function getTwitterOauthUrl() {
   const rootUrl = "https://twitter.com/i/oauth2/authorize";
   const options = {
-    redirect_uri: "https://www.localhost:3001/oauth/twitter", // client url cannot be http://localhost:3000/ or http://127.0.0.1:3000/
+    redirect_uri: "http://www.localhost:3001/oauth/twitter", // client url cannot be http://localhost:3000/ or http://127.0.0.1:3000/
     client_id: "T1dLaHdFSWVfTnEtQ2psZThTbnI6MTpjaQ",
     state: "state",
     response_type: "code",
