@@ -41,9 +41,20 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async findOneUser(@Ctx() { prisma }: Context, @Arg("id") id: string) {
-    const user = await prisma.user.findFirst({ where: { id } });
-    return user;
+  async findOneUser(@Ctx() context: Context, @Arg("id") id: string) {
+    const user = await authenticate(context, true);
+    if (user?.id === id) {
+      return user;
+    }
+    const viewedUser = await context.prisma.user.findUnique({
+      where: { id },
+      include: { posts: { take: 10 }, comments: { take: 10 } },
+    });
+    if (viewedUser?.visibility === "private") {
+      viewedUser.comments = [];
+      viewedUser.posts = [];
+    }
+    return viewedUser;
   }
 
   @Query(() => UserResponse)

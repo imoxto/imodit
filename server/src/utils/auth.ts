@@ -87,6 +87,7 @@ export async function authenticate({ req, prisma }: Context, safe = false) {
   const { userId, userType } = await getJwtPayloadFromReq(req);
   const userFromDb = await prisma.user.findUnique({
     where: { id_type: { id: userId, type: userType } },
+    include: { posts: { take: 10 }, comments: { take: 10 } },
   });
   return safe ? userFromDb : await checkUser(userFromDb);
 }
