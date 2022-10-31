@@ -5,7 +5,6 @@ import { randomBytes } from "crypto";
 import { CookieOptions, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Context, UserJWTPayload } from "../types";
-import { getTwitterUser } from "../oauth";
 
 const hashingConfig = {
   // based on OWASP cheat sheet recommendations (as of March, 2022)
@@ -49,20 +48,17 @@ export function addResCookie({
   res,
   user,
   remember = true,
-  accessToken,
   duration,
 }: {
   res: Response;
   user: User;
   remember?: boolean;
-  accessToken?: string;
   duration?: number;
 }) {
   const { id, type } = user;
   const token = signToken<UserJWTPayload>({
     userId: id,
     userType: type,
-    accessToken,
   });
   res.cookie(COOKIE_NAME, token, {
     ...cookieOptions,
@@ -82,46 +78,37 @@ export function getJwtPayloadFromReq(req: Request) {
   return jwt.verify(token, JWT_SECRET) as Promise<UserJWTPayload>;
 }
 
-export async function checkUser(user: User | null, accessToken: string | undefined) {
+export async function checkUser(user: User | null) {
   if (!user) throw new Error("Not Authenticated");
-  if (user.type === "twitter") {
-    if (!accessToken) {
-      throw new Error("Not Authenticated");
-    }
-    const twUser = await getTwitterUser(accessToken);
-    if (twUser?.id !== user.id) {
-      throw new Error("Not Authenticated");
-    }
-  }
   return user;
 }
 
-export async function authenticate({ req, prisma }: Context) {
-  const { userId, userType, accessToken } = await getJwtPayloadFromReq(req);
+export async function authenticate({ req, prisma }: Context, safe = false) {
+  const { userId, userType } = await getJwtPayloadFromReq(req);
   const userFromDb = await prisma.user.findUnique({
     where: { id_type: { id: userId, type: userType } },
   });
-  return await checkUser(userFromDb, accessToken);
+  return safe ? userFromDb : await checkUser(userFromDb);
 }
 
 export async function authenticateWithPost({ req, prisma }: Context, postId: string) {
-  const { userId, accessToken } = await getJwtPayloadFromReq(req);
+  const { userId } = await getJwtPayloadFromReq(req);
   const postFromDb = await prisma.post.findFirst({
     where: { id: postId, authorId: userId },
     include: { author: true },
   });
   if (!postFromDb) throw new Error("Not Authenticated");
-  await checkUser(postFromDb.author, accessToken);
+  await checkUser(postFromDb.author);
   return postFromDb;
 }
 
 export async function authenticateWithComment({ req, prisma }: Context, commentId: string) {
-  const { userId, accessToken } = await getJwtPayloadFromReq(req);
+  const { userId } = await getJwtPayloadFromReq(req);
   const commentFromDb = await prisma.comment.findFirst({
     where: { id: commentId, authorId: userId },
     include: { author: true },
   });
   if (!commentFromDb) throw new Error("Not Authenticated");
-  await checkUser(commentFromDb.author, accessToken);
+  await checkUser(commentFromDb.author);
   return commentFromDb;
 }

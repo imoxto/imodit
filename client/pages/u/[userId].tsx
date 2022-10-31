@@ -8,7 +8,7 @@ import { useFindOneUserQuery } from "../../utils/generates";
 export default function UserPage() {
   const router = useRouter();
   const userId = router.query.userId as string;
-  const { data, isLoading } = useFindOneUserQuery(client, { userId: userId });
+  const { data, isLoading } = useFindOneUserQuery(client, { userId });
 
   return (
     <RowStack>

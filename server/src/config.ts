@@ -13,7 +13,7 @@ export const CLIENT_URL2 = process.env.CLIENT_URL2!;
 export const JWT_SECRET = process.env.JWT_SECRET!;
 export const JWT_ALGORITHM = process.env.JWT_ALGORITHM! as Algorithm;
 
-export const prisma = new PrismaClient(PROD_ENV ? undefined : { log: ["query"] });
+export const prisma = new PrismaClient();
 
 export function getContext({ req, res }: { req: Request; res: Response }): Context {
   return { prisma, req, res };

@@ -101,8 +101,7 @@ export async function twitterOauth(req: Context["req"], res: Context["res"]) {
   addResCookie({
     res,
     user,
-    accessToken: TwitterOAuthToken.access_token,
-    duration: TwitterOAuthToken.expires_in + 3600,
+    duration: 7200,
   });
 
   return res.redirect(CLIENT_URL1);

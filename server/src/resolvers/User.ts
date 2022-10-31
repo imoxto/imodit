@@ -41,8 +41,9 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  findOneUser(@Ctx() { prisma }: Context, @Arg("id") id: string) {
-    return prisma.user.findFirst({ where: { id, visibility: "public" } });
+  async findOneUser(@Ctx() { prisma }: Context, @Arg("id") id: string) {
+    const user = await prisma.user.findFirst({ where: { id } });
+    return user;
   }
 
   @Query(() => UserResponse)
