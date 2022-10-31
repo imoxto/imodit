@@ -24,39 +24,6 @@ mutation Login($loginInput: LoginInput!) {
   }
 }
 
-mutation DeletePost($deletePostPostId2: String!) {
-  deletePost(postId: $deletePostPostId2) {
-    error {
-      ...regularError
-    }
-    post {
-      ...regularPost
-    }
-  }
-}
-
-mutation CreatePost($createPostInput: CreatePostInput!) {
-  createPost(CreatePostInput: $createPostInput) {
-    error {
-      ...regularError
-    }
-    post {
-      ...regularPost
-    }
-  }
-}
-
-mutation UpdatePost($postId: String!, $updatePostInput: UpdatePostInput!) {
-  updatePost(postId: $postId, UpdatePostInput: $updatePostInput) {
-    error {
-      ...regularError
-    }
-    post {
-      ...regularPost
-    }
-  }
-}
-
 mutation CreateComment($createCommentInput: CreateCommentInput!) {
   createComment(CreateCommentInput: $createCommentInput) {
     error {
@@ -79,8 +46,38 @@ mutation UpdateComment($commentId: String!, $updateCommentInput: UpdateCommentIn
   }
 }
 
-mutation DeleteComment($deleteCommentCommentId2: String!) {
-  deleteComment(CommentId: $deleteCommentCommentId2) {
+mutation DeleteComment($commentId: String!) {
+  deleteComment(CommentId: $commentId) {
+    error {
+      ...regularError
+    }
+  }
+}
+
+mutation UpdatePost($postId: String!, $updatePostInput: UpdatePostInput!) {
+  updatePost(postId: $postId, UpdatePostInput: $updatePostInput) {
+    error {
+      ...regularError
+    }
+    post {
+      ...regularPost
+    }
+  }
+}
+
+mutation CreatePost($createPostInput: CreatePostInput!) {
+  createPost(CreatePostInput: $createPostInput) {
+    error {
+      ...regularError
+    }
+    post {
+      ...regularPost
+    }
+  }
+}
+
+mutation DeletePost($postId: String!) {
+  deletePost(postId: $postId) {
     error {
       ...regularError
     }

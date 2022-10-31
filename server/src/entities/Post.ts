@@ -39,3 +39,9 @@ export class PostResponse extends Response {
   @Field(() => Post, { nullable: true })
   post?: Post;
 }
+
+@ObjectType()
+export class DeleteResponse extends Response {
+  @Field(() => String, { nullable: true })
+  id?: string;
+}

@@ -16,18 +16,29 @@ fragment regularError on ApiError {
 fragment regularComment on Comment {
   id
   content
-  authorId
-  postId
+  author {
+    id
+    username
+  }
+  post {
+    id
+    title
+    content
+    authorId
+  }
   createdAt
   updatedAt
 }
 
 fragment regularPost on Post {
+  id
   title
   content
-  id
   visibility
-  authorId
+  author {
+    id
+    username
+  }
   createdAt
   updatedAt
 }

@@ -2,7 +2,7 @@ import { Visibility } from "@prisma/client";
 import { Resolver, Query, Ctx, Arg, Mutation, InputType, Field } from "type-graphql";
 import { authenticate, authenticateWithPost, notAuthenticatedErr, notAuthorizedErr } from "../utils";
 
-import { Post, PostResponse } from "../entities";
+import { DeleteResponse, Post, PostResponse } from "../entities";
 import { Context } from "../types";
 
 @InputType()
@@ -35,12 +35,21 @@ export class PostResolver {
   findAllPosts(@Ctx() { prisma }: Context) {
     return prisma.post.findMany({
       where: { visibility: "public" },
+      include: {
+        author: true,
+      },
     });
   }
 
-  @Query(() => Post)
+  @Query(() => Post, {nullable: true})
   findOnePost(@Ctx() { prisma }: Context, @Arg("id") id: string) {
-    return prisma.post.findFirst({ where: { id, visibility: "public" } });
+    return prisma.post.findFirst({
+      where: { id, visibility: "public" },
+      include: {
+        author: true,
+        comments: true,
+      },
+    });
   }
 
   @Mutation(() => PostResponse)
@@ -52,7 +61,7 @@ export class PostResolver {
           ...input,
         },
         where: { id: postToUpdate.id },
-        include: { comments: true },
+        include: { author: true, comments: true },
       });
       return { post };
     } catch (err) {
@@ -60,7 +69,7 @@ export class PostResolver {
     }
   }
 
-  @Mutation(() => PostResponse)
+  @Mutation(() => DeleteResponse)
   async deletePost(@Ctx() context: Context, @Arg("postId") id: string) {
     try {
       const postToUpdate = await authenticateWithPost(context, id);
@@ -68,7 +77,7 @@ export class PostResolver {
         where: { id: postToUpdate.id },
         include: { comments: true },
       });
-      return { post };
+      return { id: post.id };
     } catch (err) {
       return notAuthorizedErr(context.res);
     }

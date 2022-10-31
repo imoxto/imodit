@@ -16,7 +16,7 @@ const hashingConfig = {
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: PROD_ENV || true,
+  secure: true,
   sameSite: PROD_ENV ? "strict" : "none",
   // domain: new URL(CLIENT_URL as string).hostname as string,
 };

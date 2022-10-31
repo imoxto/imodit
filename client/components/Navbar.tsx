@@ -34,7 +34,7 @@ export function NavBar() {
         </>
       ) : (
         <>
-          <MyLink href={`/u/${user.username}`}>
+          <MyLink href={`/u/${user.id}`}>
             <Button variant="contained">{user.username}</Button>
           </MyLink>
           <Button

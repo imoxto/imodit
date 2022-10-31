@@ -14,3 +14,16 @@ query FindAllPosts {
     ...regularPost
   }
 }
+
+
+query FindOnePost($postId: String!) {
+  findOnePost(id: $postId) {
+    ...regularPost
+  }
+}
+
+query FindOneUser($userId: String!) {
+  findOneUser(id: $userId) {
+    ...regularUser
+  }
+}

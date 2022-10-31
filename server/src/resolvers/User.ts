@@ -40,7 +40,7 @@ export class UserResolver {
     return prisma.user.findMany({ where: { visibility: "public" } });
   }
 
-  @Query(() => User)
+  @Query(() => User, { nullable: true })
   findOneUser(@Ctx() { prisma }: Context, @Arg("id") id: string) {
     return prisma.user.findFirst({ where: { id, visibility: "public" } });
   }
