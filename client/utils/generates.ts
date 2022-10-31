@@ -13,8 +13,6 @@ function fetcher<TData, TVariables>(
   variables?: TVariables,
   headers?: RequestInit["headers"]
 ) {
-  console.log(variables);
-
   return async (): Promise<TData> => client.request<TData, TVariables>(query, variables, headers);
 }
 /** All built-in and custom scalars, mapped to their actual values */

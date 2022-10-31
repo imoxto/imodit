@@ -90,7 +90,7 @@ export class PostResolver {
       const post = await context.prisma.post.create({
         data: {
           ...input,
-          authorId: user.id,
+          authorId: user!.id,
         },
         include: { comments: true },
       });

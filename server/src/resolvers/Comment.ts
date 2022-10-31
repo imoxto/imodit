@@ -71,7 +71,7 @@ export class CommentResolver {
       const comment = await context.prisma.comment.create({
         data: {
           ...input,
-          authorId: user.id,
+          authorId: user!.id,
         },
       });
       return { comment };
