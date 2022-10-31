@@ -92,7 +92,7 @@ export class PostResolver {
           ...input,
           authorId: user!.id,
         },
-        include: { comments: true },
+        include: { author: true, comments: true },
       });
       return { post };
     } catch (err) {
