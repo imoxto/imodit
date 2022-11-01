@@ -47,7 +47,11 @@ export class PostResolver {
       where: { id, visibility: "public" },
       include: {
         author: true,
-        comments: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
   }

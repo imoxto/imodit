@@ -42,3 +42,26 @@ fragment regularPost on Post {
   createdAt
   updatedAt
 }
+
+fragment extendedPost on Post {
+  id
+  title
+  content
+  visibility
+  author {
+    id
+    username
+  }
+  comments {
+    id
+    content
+    author {
+      id
+      username
+    }
+    createdAt
+    updatedAt
+  }
+  createdAt
+  updatedAt
+}

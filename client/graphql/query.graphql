@@ -18,7 +18,7 @@ query FindAllPosts {
 
 query FindOnePost($postId: String!) {
   findOnePost(id: $postId) {
-    ...regularPost
+    ...extendedPost
   }
 }
 

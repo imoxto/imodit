@@ -44,6 +44,7 @@ export class CommentResolver {
           ...input,
         },
         where: { id: commentToUpdate.id },
+        include: { author: true, post: true },
       });
       return { comment };
     } catch (err) {
@@ -57,6 +58,7 @@ export class CommentResolver {
       const commentToUpdate = await authenticateWithComment(context, id);
       const comment = await context.prisma.comment.delete({
         where: { id: commentToUpdate.id },
+        include: { author: true, post: true },
       });
       return { comment };
     } catch (err) {
@@ -73,6 +75,7 @@ export class CommentResolver {
           ...input,
           authorId: user!.id,
         },
+        include: { author: true, post: true },
       });
       return { comment };
     } catch (err) {

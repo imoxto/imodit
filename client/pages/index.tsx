@@ -1,8 +1,8 @@
 import { Stack } from "@mui/material";
 import type { NextPage } from "next";
-import { PostForm } from "../components/form/PostForm";
+import { PostForm } from "../components/post/PostForm";
 import CircularIndeterminate from "../components/Loading";
-import { PostList } from "../components/PostList";
+import { PostList } from "../components/post/PostList";
 import { client } from "../utils/config";
 import { useFindAllPostsQuery } from "../utils/generates";
 

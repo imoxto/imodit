@@ -5,8 +5,8 @@ import { useSnackbar } from "notistack";
 import { client } from "../../utils/config";
 import { CreatePostInput, useCreatePostMutation } from "../../utils/generates";
 import { RowStack } from "../RowStack";
-import { SelectInput } from "./SelectInput";
-import { TextInput } from "./TextInput";
+import { SelectInput } from "../form/SelectInput";
+import { TextInput } from "../form/TextInput";
 
 export function PostForm() {
   const { mutateAsync } = useCreatePostMutation(client);
@@ -45,7 +45,7 @@ export function PostForm() {
     >
       {({ submitForm, isSubmitting }) => (
         <Form>
-          <Stack gap={1} p={3}>
+          <Stack px={3} py={2}>
             <TextInput disabled={isSubmitting} placeholder="title of post" name="title" />
             <TextInput disabled={isSubmitting} placeholder="Post Content" name="content" multiline={true} />
             <RowStack justifyContent="space-between" alignItems="center">
