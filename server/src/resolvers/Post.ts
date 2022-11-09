@@ -76,9 +76,9 @@ export class PostResolver {
   @Mutation(() => DeleteResponse)
   async deletePost(@Ctx() context: Context, @Arg("postId") id: string) {
     try {
-      const postToUpdate = await authenticateWithPost(context, id);
+      const postToDelete = await authenticateWithPost(context, id);
       const post = await context.prisma.post.delete({
-        where: { id: postToUpdate.id },
+        where: { id: postToDelete.id },
         include: { comments: true },
       });
       return { id: post.id };
