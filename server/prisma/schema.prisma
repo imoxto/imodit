@@ -28,17 +28,21 @@ enum UserRole {
 }
 
 model User {
-  id         String     @id @default(uuid())
-  email      String?    @unique
-  username   String     @unique
-  hash       String?
-  type       UserType   @default(local)
-  role       UserRole   @default(user)
-  posts      Post[]
-  visibility Visibility @default(private)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  comments   Comment[]
+  id          String        @id @default(uuid())
+  email       String?       @unique
+  username    String        @unique
+  hash        String?
+  type        UserType      @default(local)
+  role        UserRole      @default(user)
+  posts       Post[]
+  visibility  Visibility    @default(private)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  comments    Comment[]
+  karma       Int           @default(0)
+  PostVote    PostVote[]
+  CommentVote CommentVote[]
+
   @@unique([id, type])
 }
 
@@ -47,20 +51,42 @@ model Post {
   title      String
   content    String
   visibility Visibility @default(private)
-  author     User       @relation(fields: [authorId], references: [id])
-  authorId   String
+  author     User?      @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: SetNull)
+  authorId   String?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   comments   Comment[]
+  PostVote   PostVote[]
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  content   String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String        @id @default(uuid())
+  content     String
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId    String
+  post        Post          @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postId      String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  CommentVote CommentVote[]
+}
+
+model PostVote {
+  postId String
+  userId String
+  type   Boolean // upvote = true, downvote = false
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  post   Post    @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([postId, userId])
+}
+
+model CommentVote {
+  commentId String
+  userId    String
+  type      Boolean // upvote = true, downvote = false
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([commentId, userId])
 }
