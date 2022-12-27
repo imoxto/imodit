@@ -5,6 +5,7 @@ import { SnackbarProvider } from "notistack";
 
 import { Document } from "../components/Document";
 import { NavBar } from "../components/Navbar";
+import { ThemeModeProvider } from "../components/ThemeMode";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,22 +25,24 @@ const queryClient = new QueryClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Document>
-        <SnackbarProvider
-          maxSnack={1}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          autoHideDuration={5000}
-        >
-          <NavBar />
-          <Component {...pageProps} />
-          <ReactQueryDevtools />
-        </SnackbarProvider>
-      </Document>
-    </QueryClientProvider>
+    <ThemeModeProvider>
+      <QueryClientProvider client={queryClient}>
+        <Document>
+          <SnackbarProvider
+            maxSnack={1}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            autoHideDuration={5000}
+          >
+            <NavBar />
+            <Component {...pageProps} />
+            <ReactQueryDevtools />
+          </SnackbarProvider>
+        </Document>
+      </QueryClientProvider>
+    </ThemeModeProvider>
   );
 }
 

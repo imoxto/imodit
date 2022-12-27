@@ -35,16 +35,21 @@ const ModalContainer = styled(Box)<{ size: ModalSize }>`
     width: 75%;
     max-width: 500px;
   `}
+  background-color: ${({ theme }) => theme.palette.background.paper};
+  border-radius: ${({ theme }) => theme.spacing(0.25)};
+  max-height: calc(80vh - ${({ theme }) => theme.spacing(4)});
   overflow-y: auto;
   &.top-position {
     top: 10%;
     transform: translate(-50%, 0);
   }
+  color: ${({ theme }) => theme.palette.text.primary};
 `;
 
 const ScrollableModalContainer = styled(ModalContainer)`
   display: flex;
   flex-direction: column;
+  padding: ${({ theme }) => theme.spacing(4, 0)};
 `;
 
 const StyledDialogTitle = styled(MuiDialogTitle)`

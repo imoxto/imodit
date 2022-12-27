@@ -8,6 +8,7 @@ import { RowStack } from "./RowStack";
 import { useLogoutMutation } from "../utils/generates";
 import { client } from "../utils/config";
 import { useQueryClient } from "@tanstack/react-query";
+import { ThemeToggler } from "./ThemeToggler";
 
 export function NavBar() {
   const { user } = useUserStore(({ user }) => ({ user }));
@@ -15,7 +16,13 @@ export function NavBar() {
   const queryClient = useQueryClient();
   return (
     <RowStack position="static" px={1} sx={{ flexGrow: 1 }}>
-      <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+      <IconButton
+        size="large"
+        edge="start"
+        color="inherit"
+        aria-label="menu"
+        sx={{ mr: 2 }}
+      >
         <MenuIcon />
       </IconButton>
       <MyLink href="/">
@@ -23,6 +30,7 @@ export function NavBar() {
           Imodit
         </Typography>
       </MyLink>
+      <ThemeToggler />
       {!user ? (
         <>
           <MyLink href="/login">
