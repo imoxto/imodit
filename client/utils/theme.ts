@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { green, grey, red, yellow } from "@mui/material/colors";
 
-const myPrimaryColor = "#6F7BE7";
+const myPrimaryColor = "#FF00FF";
 
 declare module "@emotion/react" {
   // eslint-disable-next-line

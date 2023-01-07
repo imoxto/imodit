@@ -77,9 +77,9 @@ export class PostResolver {
   async deletePost(@Ctx() context: Context, @Arg("postId") id: string) {
     try {
       const postToDelete = await authenticateWithPost(context, id);
+
       const post = await context.prisma.post.delete({
         where: { id: postToDelete.id },
-        include: { comments: true },
       });
       return { id: post.id };
     } catch (err) {

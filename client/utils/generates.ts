@@ -82,7 +82,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createComment: CommentResponse;
   createPost: PostResponse;
-  deleteComment: CommentResponse;
+  deleteComment: DeleteResponse;
   deletePost: DeleteResponse;
   login: UserResponse;
   logout: Scalars['String'];
@@ -268,7 +268,7 @@ export type DeleteCommentMutationVariables = Exact<{
 }>;
 
 
-export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'DeleteResponse', id?: string | null, error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
 
 export type UpdatePostMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -290,7 +290,7 @@ export type DeletePostMutationVariables = Exact<{
 }>;
 
 
-export type DeletePostMutation = { __typename?: 'Mutation', deletePost: { __typename?: 'DeleteResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: { __typename?: 'DeleteResponse', id?: string | null, error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -517,6 +517,7 @@ export const DeleteCommentDocument = `
     error {
       ...regularError
     }
+    id
   }
 }
     ${RegularErrorFragmentDoc}`;
@@ -591,6 +592,7 @@ export const DeletePostDocument = `
     error {
       ...regularError
     }
+    id
   }
 }
     ${RegularErrorFragmentDoc}`;

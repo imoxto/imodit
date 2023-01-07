@@ -10,6 +10,7 @@ import { UpdatePostForm } from "./PostForm";
 import { ConfirmDeleteButton } from "../form/ConfirmDeleteButton";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
+import { useRouter } from "next/router";
 
 export function UpdatePostAction({ post }: { post: ExtendedPostFragment }) {
   const userId = useUserStore((state) => state.user?.id);
@@ -32,6 +33,7 @@ export function DeletePostAction({ post }: { post: ExtendedPostFragment }) {
   const { mutateAsync: deletePostAsync } = useDeletePostMutation(client);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
   return userId === post.author?.id ? (
     <ConfirmDeleteButton
       confirmDeleteModalProps={{
@@ -41,12 +43,15 @@ export function DeletePostAction({ post }: { post: ExtendedPostFragment }) {
             {
               onSuccess(data) {
                 if (data?.deletePost?.id === post.id) {
+                  queryClient.invalidateQueries(["FindAllPosts"]);
                   queryClient.invalidateQueries([
-                    "FindAllPosts",
+                    "FindOnePost",
                     { postId: post.id },
                   ]);
-
-                  enqueueSnackbar("Successfully created Post in!");
+                  enqueueSnackbar("Successfully deleted Post!");
+                  if (router.pathname.includes(post.id)) {
+                    router.back();
+                  }
                 } else if (data?.deletePost?.error) {
                   enqueueSnackbar(data.deletePost.error.message);
                 }

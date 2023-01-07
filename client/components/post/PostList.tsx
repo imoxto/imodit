@@ -1,5 +1,4 @@
 import { Stack } from "@mui/material";
-import React from "react";
 import { RegularPostFragment } from "../../utils/generates";
 import { PostCard } from "./PostCard";
 

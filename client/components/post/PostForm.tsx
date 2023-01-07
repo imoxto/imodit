@@ -40,8 +40,12 @@ export function CreatePostForm() {
             onSuccess(data) {
               if (data?.createPost?.post) {
                 queryClient.invalidateQueries(["FindAllPosts"]);
+                queryClient.invalidateQueries([
+                  "FindOnePost",
+                  { postId: data.createPost.post.id },
+                ]);
 
-                enqueueSnackbar("Successfully created Post in!");
+                enqueueSnackbar("Successfully created Post!");
               } else if (data?.createPost?.error) {
                 enqueueSnackbar(data.createPost.error.message);
               }
@@ -51,7 +55,7 @@ export function CreatePostForm() {
         setSubmitting(false);
         resetForm();
       }}
-      buttonText="Create Post"
+      buttonText="Edit Post"
     />
   );
 }
@@ -88,12 +92,13 @@ export function UpdatePostForm({
           {
             onSuccess(data) {
               if (data?.updatePost?.post) {
+                queryClient.invalidateQueries(["FindAllPosts"]);
                 queryClient.invalidateQueries([
-                  "FindAllPosts",
+                  "FindOnePost",
                   { postId: post.id },
                 ]);
 
-                enqueueSnackbar("Successfully created Post in!");
+                enqueueSnackbar("Successfully updated Post!");
               } else if (data?.updatePost?.error) {
                 enqueueSnackbar(data.updatePost.error.message);
               }

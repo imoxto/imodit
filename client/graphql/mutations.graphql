@@ -51,6 +51,7 @@ mutation DeleteComment($commentId: String!) {
     error {
       ...regularError
     }
+    id
   }
 }
 
@@ -81,5 +82,6 @@ mutation DeletePost($postId: String!) {
     error {
       ...regularError
     }
+    id
   }
 }
