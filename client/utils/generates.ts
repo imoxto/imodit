@@ -223,7 +223,7 @@ export type RegularUserFragment = { __typename?: 'User', id: string, email?: str
 
 export type RegularErrorFragment = { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null };
 
-export type RegularCommentFragment = { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string, title: string, content: string, authorId: string } };
+export type RegularCommentFragment = { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string } };
 
 export type RegularPostFragment = { __typename?: 'Post', id: string, title: string, content: string, visibility: Visibility, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string } };
 
@@ -253,7 +253,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string, title: string, content: string, authorId: string } } | null } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string } } | null } };
 
 export type UpdateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
@@ -261,7 +261,7 @@ export type UpdateCommentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string, title: string, content: string, authorId: string } } | null } };
+export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string } } | null } };
 
 export type DeleteCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
@@ -343,9 +343,6 @@ export const RegularCommentFragmentDoc = `
   }
   post {
     id
-    title
-    content
-    authorId
   }
   createdAt
   updatedAt

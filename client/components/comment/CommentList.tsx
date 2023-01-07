@@ -1,15 +1,23 @@
 import { Stack } from "@mui/material";
-import React from "react";
 import { ExtendedPostFragment } from "../../utils/generates";
 import { CommentCard } from "./CommentCard";
-import { CommentCreate } from "./CommentCreate";
+import { CreateCommentForm } from "./CommentForm";
 
-export function CommentList({ comments, postId }: { postId: string; comments: ExtendedPostFragment["comments"] }) {
+export function CommentList({
+  comments,
+  postId,
+}: {
+  postId: string;
+  comments: ExtendedPostFragment["comments"];
+}) {
   return (
     <Stack px={3}>
-      <CommentCreate postId={postId} />
+      <CreateCommentForm postId={postId} />
       {comments.map((comment) => (
-        <CommentCard key={comment.id} comment={comment} />
+        <CommentCard
+          key={comment.id}
+          comment={{ ...comment, post: { id: postId } }}
+        />
       ))}
     </Stack>
   );

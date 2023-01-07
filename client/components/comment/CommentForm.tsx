@@ -1,53 +1,47 @@
-import { Stack, Button } from "@mui/material";
+import { Stack, Button, IconButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Formik, Form } from "formik";
 import { useSnackbar } from "notistack";
 import { client } from "../../utils/config";
 import {
-  CreatePostInput,
-  RegularPostFragment,
-  UpdatePostInput,
-  useCreatePostMutation,
-  useUpdatePostMutation,
+  CreateCommentInput,
+  RegularCommentFragment,
+  UpdateCommentInput,
+  useCreateCommentMutation,
+  useUpdateCommentMutation,
 } from "../../utils/generates";
 import { RowStack } from "../RowStack";
-import { SelectInput } from "../form/SelectInput";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { TextInput } from "../form/TextInput";
 
-export function CreatePostForm() {
-  const { mutateAsync } = useCreatePostMutation(client);
+export function CreateCommentForm({ postId }: { postId: string }) {
+  const { mutateAsync } = useCreateCommentMutation(client);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
 
   return (
-    <PostForm
+    <CommentForm
       initialValues={{
         content: "",
-        title: "",
-        visibility: "public" as any,
       }}
       onSubmit={async (
-        values: CreatePostInput,
+        values: Pick<CreateCommentInput, "content">,
         { setSubmitting, resetForm }
       ) => {
         setSubmitting(true);
 
         await mutateAsync(
           {
-            createPostInput: values,
+            createCommentInput: { ...values, postId },
           },
           {
             onSuccess(data) {
-              if (data?.createPost?.post) {
-                queryClient.invalidateQueries(["FindAllPosts"]);
-                queryClient.invalidateQueries([
-                  "FindOnePost",
-                  { postId: data.createPost.post.id },
-                ]);
+              if (data?.createComment?.comment) {
+                queryClient.invalidateQueries(["FindOnePost", { postId }]);
 
-                enqueueSnackbar("Successfully created Post!");
-              } else if (data?.createPost?.error) {
-                enqueueSnackbar(data.createPost.error.message);
+                enqueueSnackbar("Successfully created a Comment!");
+              } else if (data?.createComment?.error) {
+                enqueueSnackbar(data.createComment.error.message);
               }
             },
           }
@@ -55,73 +49,70 @@ export function CreatePostForm() {
         setSubmitting(false);
         resetForm();
       }}
-      buttonText="Create Post"
+      buttonText="Create Comment"
     />
   );
 }
 
-export function UpdatePostForm({
-  post,
+export function UpdateCommentForm({
+  comment,
   afterUpdateCb,
 }: {
-  post: RegularPostFragment;
-  afterUpdateCb: () => void;
+  comment: RegularCommentFragment;
+  afterUpdateCb?: () => void;
 }) {
-  const { mutateAsync } = useUpdatePostMutation(client);
+  const { mutateAsync } = useUpdateCommentMutation(client);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
 
   return (
-    <PostForm
+    <CommentForm
       initialValues={{
-        content: post.content,
-        title: post.title,
-        visibility: post.visibility as any,
+        content: comment.content,
       }}
       onSubmit={async (
-        values: UpdatePostInput,
+        values: Pick<UpdateCommentInput, "content">,
         { setSubmitting, resetForm }
       ) => {
         setSubmitting(true);
 
         await mutateAsync(
           {
-            updatePostInput: values,
-            postId: post.id,
+            commentId: comment.id,
+            updateCommentInput: { ...values },
           },
           {
             onSuccess(data) {
-              if (data?.updatePost?.post) {
-                queryClient.invalidateQueries(["FindAllPosts"]);
+              if (data?.updateComment?.comment) {
                 queryClient.invalidateQueries([
                   "FindOnePost",
-                  { postId: post.id },
+                  { postId: data?.updateComment?.comment.post.id },
                 ]);
 
-                enqueueSnackbar("Successfully updated Post!");
-              } else if (data?.updatePost?.error) {
-                enqueueSnackbar(data.updatePost.error.message);
+                enqueueSnackbar("Successfully updated the Comment!");
+              } else if (data?.updateComment?.error) {
+                enqueueSnackbar(data.updateComment.error.message);
               }
             },
           }
         );
         setSubmitting(false);
         resetForm();
-        afterUpdateCb();
+        afterUpdateCb?.();
       }}
-      buttonText="Edit Post"
+      buttonText="Update Comment"
     />
   );
 }
 
-export function PostForm({
+export function CommentForm({
   initialValues,
   onSubmit,
   buttonText,
 }: {
-  initialValues: CreatePostInput;
+  initialValues: Pick<CreateCommentInput, "content">;
   onSubmit: (
-    values: CreatePostInput,
+    values: Pick<CreateCommentInput, "content">,
     {
       setSubmitting,
       resetForm,
@@ -139,22 +130,14 @@ export function PostForm({
           <Stack px={3} py={2}>
             <TextInput
               disabled={isSubmitting}
-              placeholder="title of post"
-              name="title"
-            />
-            <TextInput
-              disabled={isSubmitting}
-              placeholder="Post Content"
+              placeholder="Comment Content"
               name="content"
               multiline={true}
             />
             <RowStack justifyContent="space-between" alignItems="center">
-              <SelectInput
-                disabled={isSubmitting}
-                placeholder="Post Content"
-                name="visibility"
-                values={["public", "private"]}
-              />
+              <IconButton>
+                <ThumbUpIcon />
+              </IconButton>
               <Button
                 variant="contained"
                 color="primary"
