@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import type { NextPage } from "next";
-import { PostForm } from "../components/post/PostForm";
+import { CreatePostForm } from "../components/post/PostForm";
 import CircularIndeterminate from "../components/Loading";
 import { PostList } from "../components/post/PostList";
 import { client } from "../utils/config";
@@ -11,7 +11,7 @@ const Home: NextPage = () => {
   const posts = data?.findAllPosts ?? [];
   return (
     <Stack>
-      <PostForm />
+      <CreatePostForm />
       {isLoading ? <CircularIndeterminate /> : <PostList posts={posts} />}
     </Stack>
   );

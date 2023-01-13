@@ -7,8 +7,12 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 
-function fetcher<TData, TVariables>(client: GraphQLClient, query: string, variables?: TVariables, headers?: RequestInit['headers']) {
-  return async (): Promise<TData> => client.request<TData, TVariables>(query, variables, headers);
+function fetcher<TData, TVariables extends { [key: string]: any }>(client: GraphQLClient, query: string, variables?: TVariables, requestHeaders?: RequestInit['headers']) {
+  return async (): Promise<TData> => client.request({
+    document: query,
+    variables,
+    requestHeaders
+  });
 }
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -78,7 +82,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createComment: CommentResponse;
   createPost: PostResponse;
-  deleteComment: CommentResponse;
+  deleteComment: DeleteResponse;
   deletePost: DeleteResponse;
   login: UserResponse;
   logout: Scalars['String'];
@@ -219,7 +223,7 @@ export type RegularUserFragment = { __typename?: 'User', id: string, email?: str
 
 export type RegularErrorFragment = { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null };
 
-export type RegularCommentFragment = { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string, title: string, content: string, authorId: string } };
+export type RegularCommentFragment = { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string } };
 
 export type RegularPostFragment = { __typename?: 'Post', id: string, title: string, content: string, visibility: Visibility, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string } };
 
@@ -249,7 +253,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string, title: string, content: string, authorId: string } } | null } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string } } | null } };
 
 export type UpdateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
@@ -257,14 +261,14 @@ export type UpdateCommentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string, title: string, content: string, authorId: string } } | null } };
+export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, username: string }, post: { __typename?: 'Post', id: string } } | null } };
 
 export type DeleteCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
 }>;
 
 
-export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'DeleteResponse', id?: string | null, error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
 
 export type UpdatePostMutationVariables = Exact<{
   postId: Scalars['String'];
@@ -286,7 +290,7 @@ export type DeletePostMutationVariables = Exact<{
 }>;
 
 
-export type DeletePostMutation = { __typename?: 'Mutation', deletePost: { __typename?: 'DeleteResponse', error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: { __typename?: 'DeleteResponse', id?: string | null, error?: { __typename?: 'ApiError', type: ErrorType, message?: string | null, fields?: Array<string> | null } | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -339,9 +343,6 @@ export const RegularCommentFragmentDoc = `
   }
   post {
     id
-    title
-    content
-    authorId
   }
   createdAt
   updatedAt
@@ -513,6 +514,7 @@ export const DeleteCommentDocument = `
     error {
       ...regularError
     }
+    id
   }
 }
     ${RegularErrorFragmentDoc}`;
@@ -587,6 +589,7 @@ export const DeletePostDocument = `
     error {
       ...regularError
     }
+    id
   }
 }
     ${RegularErrorFragmentDoc}`;

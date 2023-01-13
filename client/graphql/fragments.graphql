@@ -22,9 +22,6 @@ fragment regularComment on Comment {
   }
   post {
     id
-    title
-    content
-    authorId
   }
   createdAt
   updatedAt

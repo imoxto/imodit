@@ -19,7 +19,6 @@ enum UserType {
   local
   twitter
   google
-  facebook
 }
 
 enum UserRole {
@@ -35,7 +34,7 @@ model User {
   type       UserType   @default(local)
   role       UserRole   @default(user)
   posts      Post[]
-  visibility Visibility @default(private)
+  visibility Visibility @default(public)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   comments   Comment[]
@@ -46,8 +45,8 @@ model Post {
   id         String     @id @default(uuid())
   title      String
   content    String
-  visibility Visibility @default(private)
-  author     User       @relation(fields: [authorId], references: [id])
+  visibility Visibility @default(public)
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   authorId   String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
@@ -57,9 +56,9 @@ model Post {
 model Comment {
   id        String   @id @default(uuid())
   content   String
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   authorId  String
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   postId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

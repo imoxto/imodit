@@ -1,7 +1,7 @@
 import { Resolver, Query, Ctx, Arg, Mutation, InputType, Field } from "type-graphql";
 import { authenticate, authenticateWithComment, notAuthenticatedErr, notAuthorizedErr } from "../utils";
 
-import { Comment, CommentResponse } from "../entities";
+import { Comment, CommentResponse, DeleteResponse } from "../entities";
 import { Context } from "../types";
 
 @InputType()
@@ -52,22 +52,24 @@ export class CommentResolver {
     }
   }
 
-  @Mutation(() => CommentResponse)
+  @Mutation(() => DeleteResponse)
   async deleteComment(@Ctx() context: Context, @Arg("CommentId") id: string) {
     try {
       const commentToUpdate = await authenticateWithComment(context, id);
       const comment = await context.prisma.comment.delete({
         where: { id: commentToUpdate.id },
-        include: { author: true, post: true },
       });
-      return { comment };
+      return { id: comment.id };
     } catch (err) {
       return notAuthorizedErr(context.res);
     }
   }
 
   @Mutation(() => CommentResponse)
-  async createComment(@Ctx() context: Context, @Arg("CreateCommentInput") input: CreateCommentInput) {
+  async createComment(
+    @Ctx() context: Context,
+    @Arg("CreateCommentInput") input: CreateCommentInput
+  ) {
     try {
       const user = await authenticate(context);
       const comment = await context.prisma.comment.create({

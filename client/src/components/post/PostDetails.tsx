@@ -4,6 +4,7 @@ import { relativeTimeFromDate } from "../../utils/date";
 import { ExtendedPostFragment } from "../../utils/generates";
 import { CommentList } from "../comment/CommentList";
 import { RowStack } from "../RowStack";
+import { DeletePostAction, UpdatePostAction } from "./PostActions";
 
 export function PostDetails({ post }: { post: ExtendedPostFragment }) {
   return (
@@ -17,7 +18,13 @@ export function PostDetails({ post }: { post: ExtendedPostFragment }) {
       <Typography variant="body1">{post.content}</Typography>
 
       <RowStack justifyContent="space-between">
-        <Typography variant="caption">{relativeTimeFromDate(post.createdAt)}</Typography>
+        <Typography variant="caption">
+          {relativeTimeFromDate(post.createdAt)}
+        </Typography>
+        <RowStack>
+          <UpdatePostAction post={post} />
+          <DeletePostAction post={post} />
+        </RowStack>
         <RowStack>
           <Link href={`/u/${post.author.id}`}>
             <Typography variant="overline" sx={{ cursor: "pointer" }}>
