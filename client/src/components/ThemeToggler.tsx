@@ -1,21 +1,21 @@
 import Brightness5Outlined from "@mui/icons-material/Brightness5Outlined";
 import ModeNightOutlined from "@mui/icons-material/ModeNightOutlined";
 import { IconButton } from "@mui/material";
-import { useThemeMode } from "./ThemeMode";
+import { useTheme } from "next-themes";
 
 export function ThemeToggler() {
-  const { setThemeMode, themeMode } = useThemeMode();
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <IconButton
       size="small"
       disableRipple
-      onClick={() => setThemeMode(themeMode === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
     >
-      {themeMode === "dark" ? (
-        <ModeNightOutlined fontSize="small" />
-      ) : (
+      {resolvedTheme === "light" ? (
         <Brightness5Outlined fontSize="small" />
+      ) : (
+        <ModeNightOutlined fontSize="small" />
       )}
     </IconButton>
   );

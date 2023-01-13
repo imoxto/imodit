@@ -2,10 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { AppProps } from "next/app";
 import { SnackbarProvider } from "notistack";
+import { useEffect, useState } from "react";
 
 import { Document } from "../components/Document";
 import { NavBar } from "../components/Navbar";
-import { ThemeModeProvider } from "../components/ThemeMode";
+import { ImoditThemeProvider } from "../components/ThemeMode";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,8 +25,24 @@ const queryClient = new QueryClient({
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    const jssStyles = document.querySelector("#jss-server-side");
+    if (jssStyles?.parentElement) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <ThemeModeProvider>
+    <ImoditThemeProvider>
       <QueryClientProvider client={queryClient}>
         <Document>
           <SnackbarProvider
@@ -42,7 +59,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </SnackbarProvider>
         </Document>
       </QueryClientProvider>
-    </ThemeModeProvider>
+    </ImoditThemeProvider>
   );
 }
 

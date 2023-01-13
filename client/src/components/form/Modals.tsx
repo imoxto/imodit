@@ -36,7 +36,7 @@ const ModalContainer = styled(Box)<{ size: ModalSize }>`
     max-width: 500px;
   `}
   background-color: ${({ theme }) => theme.palette.background.paper};
-  border-radius: ${({ theme }) => theme.spacing(0.25)};
+  border-radius: 2px;
   max-height: calc(80vh - ${({ theme }) => theme.spacing(4)});
   overflow-y: auto;
   &.top-position {
